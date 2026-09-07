@@ -163,3 +163,4 @@ The source release does not include restricted clinical data, patient-derived ca
 - `internal/final_experiment/`: authoritative five-dataset paper experiment and renderers;
 - `internal/`: local clinical pipelines, baseline adapters, and development runners;
 - `results/`: generated artifacts; intentionally not source-controlled.
+# Performative-CP
