@@ -4,6 +4,7 @@ import torch
 
 from data import TrajectoryBatch
 from experiments import PerStepCalibrationInputs, calibrate_per_step_marginal
+from scpcp import SyntheticConfig, build_synthetic_problem
 
 
 class _LoggingPolicy:
@@ -56,3 +57,11 @@ def test_public_calibration_api_returns_a_stagewise_schedule() -> None:
 
     assert selected.selection_available
     assert torch.equal(selected.radii, torch.tensor([1.5, 1.5]))
+
+
+def test_public_module_exports_the_default_synthetic_problem() -> None:
+    problem = build_synthetic_problem(seed=370_000, samples=64)
+
+    assert isinstance(problem.config, SyntheticConfig)
+    assert problem.config.gamma == -4.0
+    assert problem.trajectories.outcomes.shape == (64, 12, 2)

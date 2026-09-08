@@ -19,41 +19,11 @@ import torch
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from data import TrajectoryBatch
 from experiments import PerStepCalibrationInputs, calibrate_per_step_marginal
+from synthetic import DEFAULT_SEEDS, GAMMAS, build_synthetic_problem
 
 
-DEFAULT_SEEDS = tuple(range(20))
 DATASETS = ("synthetic", "mimic_iv", "eicu", "inspire", "mimic_cxr")
-
-
-class _UniformLoggingPolicy:
-    def probabilities(self, states: torch.Tensor) -> torch.Tensor:
-        return torch.full((len(states), 2), 0.5, device=states.device)
-
-
-class _SyntheticTargetPolicy:
-    def probabilities_for_grid(
-        self,
-        states: torch.Tensor,
-        radii: torch.Tensor,
-    ) -> torch.Tensor:
-        state_effect = 0.20 * torch.tanh(states[:, :1])
-        radius_effect = 0.10 * radii[None, :]
-        probability_one = torch.sigmoid(-0.35 + state_effect + radius_effect)
-        return torch.stack((1.0 - probability_one, probability_one), dim=-1)
-
-
-class _UnitScaleOutcomeModel:
-    def __call__(
-        self,
-        states: torch.Tensor,
-        actions: torch.Tensor,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
-        return (
-            torch.zeros((len(states), 1), device=states.device),
-            torch.ones((len(states), 1), device=states.device),
-        )
 
 
 def main() -> None:
@@ -65,7 +35,8 @@ def main() -> None:
         default=None,
         help="run one seed; omit it to run the default 20-seed experiment",
     )
-    parser.add_argument("--samples", type=int, default=1_000)
+    parser.add_argument("--gamma", type=float, choices=GAMMAS, default=-4.0)
+    parser.add_argument("--samples", type=int, default=3_000)
     parser.add_argument("--horizon", type=int, default=12)
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--devices", default="cuda:0,cuda:1")
@@ -85,13 +56,20 @@ def main() -> None:
 
     seeds = (args.seed,) if args.seed is not None else DEFAULT_SEEDS
     records = [
-        _run_seed(seed=seed, samples=args.samples, horizon=args.horizon)
+        _run_seed(
+            seed=seed,
+            samples=args.samples,
+            horizon=args.horizon,
+            gamma=args.gamma,
+        )
         for seed in seeds
     ]
     result = _single_seed_result(records[0]) if args.seed is not None else _summary_result(records)
     result["dataset"] = args.dataset
     result["samples_per_seed"] = args.samples
     result["horizon"] = args.horizon
+    result["gamma"] = args.gamma
+    result["synthetic_protocol"] = "signed_feedback_global_scale"
 
     text = json.dumps(result, indent=2) + "\n"
     if args.output is None:
@@ -133,13 +111,26 @@ def _run_private_dataset(args: argparse.Namespace, parser: argparse.ArgumentPars
     subprocess.run(command, check=True)
 
 
-def _run_seed(*, seed: int, samples: int, horizon: int) -> dict[str, torch.Tensor | int | float]:
-    inputs = _synthetic_inputs(seed=seed, samples=samples, horizon=horizon)
+def _run_seed(
+    *, seed: int, samples: int, horizon: int, gamma: float
+) -> dict[str, torch.Tensor | int | float]:
+    problem = build_synthetic_problem(
+        seed=seed,
+        samples=samples,
+        horizon=horizon,
+        gamma=gamma,
+    )
+    inputs = PerStepCalibrationInputs(
+        trajectories=problem.trajectories,
+        scores=problem.scores,
+        stage_grids=problem.stage_grids,
+        outcome_sd=problem.outcome_sd,
+    )
     selection = calibrate_per_step_marginal(
         inputs,
-        target_policy=_SyntheticTargetPolicy(),
-        logging_policy=_UniformLoggingPolicy(),
-        outcome_model=_UnitScaleOutcomeModel(),
+        target_policy=problem.target_policy,
+        logging_policy=problem.logging_policy,
+        outcome_model=problem.outcome_model,
     )
     if not selection.selection_available:
         raise RuntimeError(f"no feasible radius at stage {selection.failure_stage}")
@@ -184,27 +175,6 @@ def _summary_result(records: list[dict[str, torch.Tensor | int | float]]) -> dic
 def _rounded(value: torch.Tensor | int | float, *, digits: int) -> list[float]:
     tensor = torch.as_tensor(value)
     return [round(float(item), digits) for item in tensor]
-
-
-def _synthetic_inputs(*, seed: int, samples: int, horizon: int) -> PerStepCalibrationInputs:
-    generator = torch.Generator().manual_seed(seed)
-    states = torch.randn((samples, horizon + 1, 1), generator=generator)
-    actions = torch.randint(0, 2, (samples, horizon), generator=generator)
-    noise = 0.75 * torch.randn((samples, horizon, 1), generator=generator)
-    outcomes = 0.35 * states[:, 1:] + 0.25 * actions[..., None] + noise
-    scores = outcomes.abs().squeeze(-1)
-    stage_grid = torch.linspace(0.05, 4.0, 80)
-    return PerStepCalibrationInputs(
-        trajectories=TrajectoryBatch(
-            states=states,
-            actions=actions,
-            outcomes=outcomes,
-            patient_ids=torch.arange(samples),
-        ),
-        scores=scores,
-        stage_grids=stage_grid.repeat(horizon, 1),
-        outcome_sd=torch.ones(1),
-    )
 
 
 if __name__ == "__main__":
