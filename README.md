@@ -65,19 +65,6 @@ result = calibrate_per_step_marginal(
 )
 ```
 
-## **Paper Experiments**
-
-The following commands require the private/internal paper extension; they are
-not part of a source-only checkout:
-
-```bash
-conda run -n ucp python internal/run_synthetic_design.py
-conda run -n ucp python internal/run_synthetic_experiment.py --all-gammas
-conda run -n ucp python internal/run_synthetic_mfcs.py --all-gammas
-conda run -n ucp python internal/render_synthetic_results.py
-conda run -n ucp python internal/render_current_paper_results.py
-```
-
 
 ## **Datasets**
 
