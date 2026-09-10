@@ -67,7 +67,8 @@ result = calibrate_per_step_marginal(
 
 ## **Paper Experiments**
 
-
+The following commands require the private/internal paper extension; they are
+not part of a source-only checkout:
 
 ```bash
 conda run -n ucp python internal/run_synthetic_design.py
@@ -110,16 +111,15 @@ The target per-stage coverage is `0.90`. The primary feedback setting is `gamma=
 Clinical patients are split into:
 
 ```text
-D_pred / D_fid / D_env = 40% / 20% / 40%
+D_pred / D_COT / D_cert / D_env = 40% / 15% / 30% / 15%
 ```
 
-`D_pred` fits and freezes the outcome and logging-policy models. `D_fid` fixes the radius-response range and supplies the native SPCI training stream. `D_env` constructs the frozen controlled evaluator and is never used for calibration. The synthetic benchmark instead uses known logging and target propensities and a known transition kernel.
 
 
 
 ## **Methods and Metrics**
 
-The canonical comparison contains exactly:
+The paper tooling recognizes the following method labels:
 
 - Standard CP
 - ACI
@@ -128,13 +128,11 @@ The canonical comparison contains exactly:
 - PRC
 - SC-PCP
 
-Continuous Causal CP is evaluated separately as a diagnostic because its native output is an individualized interval, not a fixed pre-deployment stagewise schedule.
-
 The reported metrics are:
 
 - **Marginal worst-step coverage (WSC):** `min_t mean_seed(C_seed,t)`, the primary coverage metric. For a `mean ± SD (n=20)` table entry, let `t* = argmin_t mean_seed(C_seed,t)` and report `mean_seed(C_seed,t*) ± SD_seed(C_seed,t*)`. Do not replace WSC with `mean_seed(min_t C_seed,t)`.
 - **MeanCov:** for each seed, average coverage across stages, then report the mean and standard deviation across seeds.
-- **Normalized prediction-set size:** use normalized box area for box methods and native normalized ellipsoid area for SPCI. The current Synthetic records also retain normalized coordinate width as a box-only diagnostic.
+- **Normalized prediction-set size:** use normalized box size for box methods and native normalized ellipsoid size for SPCI. Rank efficiency only within comparable set geometries. Normalized coordinate width is a box-only diagnostic.
 
 
 
@@ -145,7 +143,6 @@ The source release does not include restricted clinical data, patient-derived ca
 ## **Source Layout**
 
 - `run_experiment.py`: concise public synthetic entry point;
-- `src/marginal_prefix.py`: committed-prefix SC-PCP selector;
 - `src/experiments.py`: public calibration wrapper;
 - `src/synthetic.py`: default signed-feedback Synthetic benchmark;
 - `src/data.py`: public trajectory container;
