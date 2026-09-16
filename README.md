@@ -1,10 +1,10 @@
-# **Self-Consistent Performative Conformal Prediction**
+# **Self-Consistent Conformal Prediction**
 
-This project implements **SC-PCP**.
+This project implements **SCCP**.
 
 ## **Installation**
 
-SC-PCP requires Python 3.11 or later.
+SCCP requires Python 3.11 or later.
 
 ```bash
 python -m venv .venv
@@ -13,7 +13,7 @@ python -m pip install --upgrade pip
 python -m pip install -e .
 ```
 
-PyTorch is a required dependency. For GPU use, install the PyTorch build that matches the local CUDA environment before installing SC-PCP.
+PyTorch is a required dependency. For GPU use, install the PyTorch build that matches the local CUDA environment before installing SCCP.
 
 ## **Quick Start**
 
@@ -93,7 +93,7 @@ All clinical roles are split by patient identifier. A patient appearing in more 
 
 ## **Experimental Protocol**
 
-The target per-stage coverage is `0.90`. The primary feedback setting is `gamma=-4`; `gamma` in `{-2, 0, 2, 4}` forms the prespecified sensitivity analysis. Here `gamma` belongs to the deployment environment, not to SC-PCP.
+The target per-stage coverage is `0.90`. The primary feedback setting is `gamma=-4`; `gamma` in `{-2, 0, 2, 4}` forms the prespecified sensitivity analysis. Here `gamma` belongs to the deployment environment, not to SCCP.
 
 Clinical patients are split into:
 
@@ -113,7 +113,7 @@ The paper tooling recognizes the following method labels:
 - MFCS
 - SPCI
 - PRC
-- SC-PCP
+- SCCP
 
 The reported metrics are:
 

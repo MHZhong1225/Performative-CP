@@ -1,4 +1,4 @@
-"""Run SC-PCP from one concise, dataset-level entry point.
+"""Run SCCP from one concise, dataset-level entry point.
 
 Example
 -------
@@ -27,7 +27,7 @@ DATASETS = ("synthetic", "mimic_iv", "eicu", "inspire", "mimic_cxr")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the public SC-PCP example")
+    parser = argparse.ArgumentParser(description="Run the public SCCP example")
     parser.add_argument("--dataset", choices=DATASETS, required=True)
     parser.add_argument(
         "--seed",
