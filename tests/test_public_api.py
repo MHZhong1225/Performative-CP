@@ -4,7 +4,7 @@ import torch
 
 from data import TrajectoryBatch
 from experiments import PerStepCalibrationInputs, calibrate_per_step_marginal
-from scpcp import SyntheticConfig, build_synthetic_problem
+from sccp import SyntheticConfig, build_synthetic_problem
 
 
 class _LoggingPolicy:
