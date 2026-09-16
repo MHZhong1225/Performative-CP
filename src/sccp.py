@@ -1,4 +1,4 @@
-"""Public entry point for Self-Consistent Performative Conformal Prediction."""
+"""Public entry point for Self-Consistent Conformal Prediction (SCCP)."""
 
 from experiments import PerStepCalibrationInputs, calibrate_per_step_marginal
 from marginal_prefix import MarginalPrefixSelection

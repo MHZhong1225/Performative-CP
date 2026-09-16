@@ -1,4 +1,4 @@
-"""Default signed-feedback synthetic benchmark for SC-PCP.
+"""Default signed-feedback synthetic benchmark for SCCP.
 
 Prediction radii change the target action policy.  Actions then change future
 difficulty and rare outcome tails through a shared, radius-free transition

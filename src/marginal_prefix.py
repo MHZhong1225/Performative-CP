@@ -1,4 +1,4 @@
-"""Committed-prefix importance-weighted calibration for marginal SC-PCP.
+"""Committed-prefix importance-weighted calibration for marginal SCCP.
 
 The selector targets per-step marginal coverage.  It is an asymptotic
 calibration procedure, not a PAC or data-conditional certificate.

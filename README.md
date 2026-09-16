@@ -47,7 +47,7 @@ The public calibration interface is:
 
 ```python
 from data import TrajectoryBatch
-from scpcp import PerStepCalibrationInputs, calibrate_per_step_marginal
+from sccp import PerStepCalibrationInputs, calibrate_per_step_marginal
 
 inputs = PerStepCalibrationInputs(
     trajectories=trajectories,
@@ -98,7 +98,7 @@ The target per-stage coverage is `0.90`. The primary feedback setting is `gamma=
 Clinical patients are split into:
 
 ```text
-D_pred / D_COT / D_cert / D_env = 40% / 15% / 30% / 15%
+D_pred / D_grid / D_cert / D_env = 40% / 15% / 30% / 15%
 ```
 
 

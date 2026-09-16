@@ -1,4 +1,4 @@
-"""Public entry point for committed-prefix marginal SC-PCP.
+"""Public entry point for committed-prefix marginal SCCP.
 
 This module intentionally contains no dataset loaders, paper baselines, or
 result-writing conventions.  It packages the final calibration estimand in a
@@ -42,7 +42,7 @@ def calibrate_per_step_marginal(
     logging_policy: object,
     outcome_model: object,
 ) -> MarginalPrefixSelection:
-    """Choose the committed-prefix SC-PCP schedule.
+    """Choose the committed-prefix SCCP schedule.
 
     The returned result is unavailable when no candidate meets the empirical
     target at a stage.  This is an asymptotic per-step marginal calibration

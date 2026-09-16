@@ -1,4 +1,4 @@
-"""Public trajectory container used by SC-PCP calibration."""
+"""Public trajectory container used by SCCP calibration."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ class TrajectoryBatch:
 
     ``states[i, t]`` is \(S_t\), ``actions[i, t]`` is \(A_t\), and
     ``outcomes[i, t]`` is \(Y_{t+1}\).  The class intentionally has no path
-    maximum: the main SC-PCP formulation is strictly per-step.
+    maximum: the main SCCP formulation is strictly per-step.
     """
 
     states: Tensor
