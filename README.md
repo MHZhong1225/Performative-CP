@@ -111,7 +111,6 @@ The paper tooling recognizes the following method labels:
 - Standard CP
 - ACI
 - MFCS
-- SPCI
 - PRC
 - SCCP
 
@@ -119,7 +118,7 @@ The reported metrics are:
 
 - **Marginal worst-step coverage (WSC):** `min_t mean_seed(C_seed,t)`, the primary coverage metric. For a `mean ± SD (n=20)` table entry, let `t* = argmin_t mean_seed(C_seed,t)` and report `mean_seed(C_seed,t*) ± SD_seed(C_seed,t*)`. Do not replace WSC with `mean_seed(min_t C_seed,t)`.
 - **MeanCov:** for each seed, average coverage across stages, then report the mean and standard deviation across seeds.
-- **Normalized prediction-set size:** use normalized box size for box methods and native normalized ellipsoid size for SPCI. Rank efficiency only within comparable set geometries. Normalized coordinate width is a box-only diagnostic.
+- **Normalized prediction-set size:** Compare efficiency using normalized box size. Normalized coordinate width is a supplementary diagnostic.
 
 
 
@@ -134,5 +133,4 @@ The source release does not include restricted clinical data, patient-derived ca
 - `src/synthetic.py`: default signed-feedback Synthetic benchmark;
 - `src/data.py`: public trajectory container;
 - `tests/`: public API and method tests;
-- `internal/`: local paper runners, baseline adapters, clinical pipelines, and renderers;
 - `results/`: generated artifacts; intentionally not source-controlled.
