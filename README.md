@@ -92,16 +92,6 @@ Calibration scores have shape `[N,T]`, stage grids have shape `[T,K]`, and `outc
 
 All clinical roles are split by patient identifier. A patient appearing in more than one role is not allowed.
 
-## **Experimental Protocol**
-
-The target per-stage coverage is `0.90`. The primary feedback setting is `gamma=-4`; `gamma` in `{-2, 0, 2, 4}` forms the prespecified sensitivity analysis. Here `gamma` belongs to the deployment environment, not to SCCP.
-
-Clinical patients are split into:
-
-```text
-D_pred / D_grid / D_cert / D_env = 40% / 15% / 30% / 15%
-```
-
 
 
 
